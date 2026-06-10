@@ -590,6 +590,8 @@ with tab2:
         cluster_data = []
         for url in filtered_urls:
             meta = cluster_meta.get(url, {})
+            inbound = subG.in_degree(url)
+            scoring = get_inbound_score(inbound)
             cluster_data.append({
                 "Keyword": meta.get("keyword", ""),
                 "URL": url,
@@ -597,8 +599,10 @@ with tab2:
                 "Fitur": meta.get("feature", ""),
                 "Intent": meta.get("intent", ""),
                 "Bahasa": meta.get("language", ""),
-                "Inbound": subG.in_degree(url),
+                "Inbound": inbound,
                 "Outbound": subG.out_degree(url),
+                "Skor": scoring["score"],
+                "Status": scoring["status"],
             })
         cluster_df = pd.DataFrame(cluster_data).sort_values("Inbound", ascending=False)
         st.dataframe(cluster_df, use_container_width=True, hide_index=True)
