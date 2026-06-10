@@ -567,7 +567,13 @@ with tab2:
                     net.add_node(node, label=label, title=tooltip, color=color, size=size)
 
             for source, target, data in subG.edges(data=True):
-                net.add_edge(source, target, color="#4B61DD", arrows="to", width=1.5)
+                source_keyword = cluster_meta.get(source, {}).get("keyword", source.split("/")[-1])
+                target_keyword = cluster_meta.get(target, {}).get("keyword", target.split("/")[-1])
+                anchor = data.get("anchor", "")
+                edge_tooltip = f"{source_keyword}\n→ {target_keyword}"
+                if anchor:
+                    edge_tooltip += f"\nAnchor: {anchor}"
+                net.add_edge(source, target, color="#4B61DD", arrows="to", width=2.5, title=edge_tooltip)
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
                 net.save_graph(tmp.name)
