@@ -119,6 +119,26 @@ with st.sidebar:
                 st.session_state.scrape_msg = f"Session '{selected_session.replace('.json', '')}' berhasil diload."
                 st.session_state.scrape_errors = []
                 st.rerun()
+            if st.button("🗑️ Hapus session ini", use_container_width=True):
+                os.remove(os.path.join(SESSION_DIR, selected_session))
+                st.success(f"Session '{selected_session.replace('.json', '')}' dihapus.")
+                st.rerun()
+                data = load_session(selected_session)
+                cluster_meta = data["cluster_meta"]
+                edges = data["edges"]
+                input_urls = set(cluster_meta.keys())
+
+                st.session_state.cluster_meta = cluster_meta
+                st.session_state.input_urls = input_urls
+                st.session_state.edges = edges
+
+                G = build_cluster_graph(edges, input_urls)
+                G = enrich_node_metadata(G, cluster_meta)
+                st.session_state.G = G
+                st.session_state.scraping_done = True
+                st.session_state.scrape_msg = f"Session '{selected_session.replace('.json', '')}' berhasil diload."
+                st.session_state.scrape_errors = []
+                st.rerun()
         st.divider()
 
     st.subheader("📂 Upload Data Cluster")
