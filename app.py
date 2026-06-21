@@ -817,6 +817,65 @@ with tab3:
 
     filtered_options = article_options
 
+    if filtered_options:
+        scope_label = f"{tab3_module}" + (f" › {tab3_feature}" if tab3_feature != "Semua Fitur" else "")
+        if st.button(f"🔄 Scrape Ulang {scope_label} ({len(filtered_options)} artikel)", use_container_width=True):
+            urls_to_rescrape = list(filtered_options.values())
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            def on_progress_rescrape(current, total, url, from_cache):
+                progress_bar.progress(current / total)
+                status_text.caption(f"[{current}/{total}] scraping: {url[-50:]}")
+
+            with st.spinner("Scraping ulang..."):
+                try:
+                    new_edges = scrape_multiple_with_cache(
+                        url_list=urls_to_rescrape,
+                        scrape_fn=scrape_links,
+                        force_refresh=True,
+                        cache_dir=CACHE_DIR,
+                        progress_callback=on_progress_rescrape,
+                        max_workers=5,
+                        content_selectors=CONTENT_SELECTORS
+                    )
+                    progress_bar.progress(1.0)
+                    status_text.empty()
+
+                    # Gabungkan edges baru ke edges lama — replace edge yang source-nya ada di urls_to_rescrape
+                    old_edges = st.session_state.edges or {"internal": [], "external": [], "errors": []}
+                    rescrape_set = set(urls_to_rescrape)
+
+                    merged_internal = [
+                        e for e in old_edges.get("internal", [])
+                        if e["source"] not in rescrape_set
+                    ] + new_edges.get("internal", [])
+
+                    merged_external = [
+                        e for e in old_edges.get("external", [])
+                        if e["source"] not in rescrape_set
+                    ] + new_edges.get("external", [])
+
+                    merged_edges = {
+                        "internal": merged_internal,
+                        "external": merged_external,
+                        "errors": new_edges.get("errors", [])
+                    }
+
+                    st.session_state.edges = merged_edges
+
+                    G_new = build_cluster_graph(merged_edges, st.session_state.input_urls)
+                    G_new = enrich_node_metadata(G_new, st.session_state.cluster_meta)
+                    st.session_state.G = G_new
+
+                    st.success(f"Berhasil scrape ulang {len(urls_to_rescrape)} artikel dari {scope_label}.")
+                    st.rerun()
+
+                except Exception as e:
+                    st.error(f"Error saat scrape ulang: {e}")
+
+        st.divider()
+
     if not filtered_options:
         st.warning("Artikel tidak ditemukan.")
     else:
