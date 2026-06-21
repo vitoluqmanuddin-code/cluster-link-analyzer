@@ -890,11 +890,12 @@ with tab3:
                         cat = item["category"]
                         bg = CATEGORY_COLORS.get(cat, "#2a2a2a")
                         fg = CATEGORY_TEXT_COLORS.get(cat, "#aaaaaa")
+                        st.markdown(
+                            f'<div style="border-left: 4px solid {fg}; padding-left: 8px; margin-bottom: 4px;">'
+                            f'<span style="font-size: 11px; color: {fg};">{cat}</span></div>',
+                            unsafe_allow_html=True
+                        )
                         with st.expander(f"**{keyword}**"):
-                            st.markdown(
-                                f'<span style="background-color: {bg}; color: {fg}; padding: 2px 8px; border-radius: 4px; font-size: 12px;">{cat}</span>',
-                                unsafe_allow_html=True
-                            )
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
                             st.caption(f"Modul: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
@@ -923,11 +924,12 @@ with tab3:
                         cat = item["category"]
                         bg = CATEGORY_COLORS.get(cat, "#2a2a2a")
                         fg = CATEGORY_TEXT_COLORS.get(cat, "#aaaaaa")
+                        st.markdown(
+                            f'<div style="border-left: 4px solid {fg}; padding-left: 8px; margin-bottom: 4px;">'
+                            f'<span style="font-size: 11px; color: {fg};">{cat}</span></div>',
+                            unsafe_allow_html=True
+                        )
                         with st.expander(f"**{keyword}**"):
-                            st.markdown(
-                                f'<span style="background-color: {bg}; color: {fg}; padding: 2px 8px; border-radius: 4px; font-size: 12px;">{cat}</span>',
-                                unsafe_allow_html=True
-                            )
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
                             st.caption(f"Modul: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
