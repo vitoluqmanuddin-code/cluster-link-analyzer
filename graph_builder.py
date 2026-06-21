@@ -266,6 +266,15 @@ def get_article_detail(G: nx.DiGraph, url: str, cluster_meta: dict) -> dict:
 
     meta = cluster_meta.get(url, {})
     current_module = meta.get("module", "")
+    current_feature = meta.get("feature", "")
+
+    def categorize(other_module: str, other_feature: str) -> str:
+        if other_module == current_module and other_feature == current_feature:
+            return "Sesama Fitur"
+        elif other_module == current_module:
+            return "Sesama Modul"
+        else:
+            return "Beda Modul"
 
     # Inbound — siapa yang link ke artikel ini
     inbound = []
@@ -277,6 +286,7 @@ def get_article_detail(G: nx.DiGraph, url: str, cluster_meta: dict) -> dict:
             "module": source_meta.get("module", ""),
             "feature": source_meta.get("feature", ""),
             "keyword": source_meta.get("keyword", ""),
+            "category": categorize(source_meta.get("module", ""), source_meta.get("feature", "")),
         })
 
     # Outbound — artikel ini link ke mana
@@ -289,6 +299,7 @@ def get_article_detail(G: nx.DiGraph, url: str, cluster_meta: dict) -> dict:
             "module": target_meta.get("module", ""),
             "feature": target_meta.get("feature", ""),
             "keyword": target_meta.get("keyword", ""),
+            "category": categorize(target_meta.get("module", ""), target_meta.get("feature", "")),
         })
 
     # Missing links — sesama modul yang belum terhubung sama sekali
@@ -320,11 +331,13 @@ def get_article_detail(G: nx.DiGraph, url: str, cluster_meta: dict) -> dict:
             else:
                 missing_same_module.append(item)
 
+    category_order = {"Sesama Fitur": 0, "Sesama Modul": 1, "Beda Modul": 2}
+
     return {
         "url": url,
         "meta": meta,
-        "inbound": sorted(inbound, key=lambda x: x["module"]),
-        "outbound": sorted(outbound, key=lambda x: x["module"]),
+        "inbound": sorted(inbound, key=lambda x: category_order.get(x["category"], 3)),
+        "outbound": sorted(outbound, key=lambda x: category_order.get(x["category"], 3)),
         "missing_same_feature": sorted(missing_same_feature, key=lambda x: x["keyword"]),
         "missing_same_module": sorted(missing_same_module, key=lambda x: x["feature"]),
     }

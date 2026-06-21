@@ -857,14 +857,44 @@ with tab3:
 
             col_in, col_out = st.columns(2)
 
+            CATEGORY_COLORS = {
+                "Sesama Fitur": "#1a2a1a",
+                "Sesama Modul": "#1a1a3d",
+                "Beda Modul": "#2a2a2a",
+            }
+            CATEGORY_TEXT_COLORS = {
+                "Sesama Fitur": "#80ff80",
+                "Sesama Modul": "#8080ff",
+                "Beda Modul": "#aaaaaa",
+            }
+
             with col_in:
                 st.subheader(f"⬅️ Inbound ({len(detail['inbound'])})")
                 st.caption("Artikel yang memberikan link ke artikel ini.")
+                st.markdown(
+                    """
+                    <div style="font-size: 13px; margin-bottom: 8px;">
+                    <span style="background-color: #1a2a1a; color: #80ff80; padding: 2px 8px; border-radius: 4px;">Sesama Fitur</span>
+                    &nbsp;&middot;&nbsp;
+                    <span style="background-color: #1a1a3d; color: #8080ff; padding: 2px 8px; border-radius: 4px;">Sesama Modul</span>
+                    &nbsp;&middot;&nbsp;
+                    <span style="background-color: #2a2a2a; color: #aaaaaa; padding: 2px 8px; border-radius: 4px;">Beda Modul</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
                 if detail["inbound"]:
                     for item in detail["inbound"]:
                         item_meta = cluster_meta.get(item["url"], {})
                         keyword = item_meta.get("keyword", item["url"].split("/")[-1])
+                        cat = item["category"]
+                        bg = CATEGORY_COLORS.get(cat, "#2a2a2a")
+                        fg = CATEGORY_TEXT_COLORS.get(cat, "#aaaaaa")
                         with st.expander(f"**{keyword}**"):
+                            st.markdown(
+                                f'<span style="background-color: {bg}; color: {fg}; padding: 2px 8px; border-radius: 4px; font-size: 12px;">{cat}</span>',
+                                unsafe_allow_html=True
+                            )
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
                             st.caption(f"Modul: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
@@ -874,11 +904,30 @@ with tab3:
             with col_out:
                 st.subheader(f"➡️ Outbound ({len(detail['outbound'])})")
                 st.caption("Artikel yang mendapat link dari artikel ini.")
+                st.markdown(
+                    """
+                    <div style="font-size: 13px; margin-bottom: 8px;">
+                    <span style="background-color: #1a2a1a; color: #80ff80; padding: 2px 8px; border-radius: 4px;">Sesama Fitur</span>
+                    &nbsp;&middot;&nbsp;
+                    <span style="background-color: #1a1a3d; color: #8080ff; padding: 2px 8px; border-radius: 4px;">Sesama Modul</span>
+                    &nbsp;&middot;&nbsp;
+                    <span style="background-color: #2a2a2a; color: #aaaaaa; padding: 2px 8px; border-radius: 4px;">Beda Modul</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
                 if detail["outbound"]:
                     for item in detail["outbound"]:
                         item_meta = cluster_meta.get(item["url"], {})
                         keyword = item_meta.get("keyword", item["url"].split("/")[-1])
+                        cat = item["category"]
+                        bg = CATEGORY_COLORS.get(cat, "#2a2a2a")
+                        fg = CATEGORY_TEXT_COLORS.get(cat, "#aaaaaa")
                         with st.expander(f"**{keyword}**"):
+                            st.markdown(
+                                f'<span style="background-color: {bg}; color: {fg}; padding: 2px 8px; border-radius: 4px; font-size: 12px;">{cat}</span>',
+                                unsafe_allow_html=True
+                            )
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
                             st.caption(f"Modul: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
