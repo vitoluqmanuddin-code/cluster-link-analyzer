@@ -883,19 +883,19 @@ with tab3:
                     """,
                     unsafe_allow_html=True
                 )
+                CATEGORY_EMOJI = {
+                    "Sesama Fitur": "🟢",
+                    "Sesama Modul": "🔵",
+                    "Beda Modul": "⚪",
+                }
+
                 if detail["inbound"]:
                     for item in detail["inbound"]:
                         item_meta = cluster_meta.get(item["url"], {})
                         keyword = item_meta.get("keyword", item["url"].split("/")[-1])
                         cat = item["category"]
-                        bg = CATEGORY_COLORS.get(cat, "#2a2a2a")
-                        fg = CATEGORY_TEXT_COLORS.get(cat, "#aaaaaa")
-                        st.markdown(
-                            f'<div style="border-left: 4px solid {fg}; padding-left: 8px; margin-bottom: 4px;">'
-                            f'<span style="font-size: 11px; color: {fg};">{cat}</span></div>',
-                            unsafe_allow_html=True
-                        )
-                        with st.expander(f"**{keyword}**"):
+                        emoji = CATEGORY_EMOJI.get(cat, "⚪")
+                        with st.expander(f"{emoji} **{keyword}**  ·  {cat}"):
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
                             st.caption(f"Modul: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
@@ -922,14 +922,8 @@ with tab3:
                         item_meta = cluster_meta.get(item["url"], {})
                         keyword = item_meta.get("keyword", item["url"].split("/")[-1])
                         cat = item["category"]
-                        bg = CATEGORY_COLORS.get(cat, "#2a2a2a")
-                        fg = CATEGORY_TEXT_COLORS.get(cat, "#aaaaaa")
-                        st.markdown(
-                            f'<div style="border-left: 4px solid {fg}; padding-left: 8px; margin-bottom: 4px;">'
-                            f'<span style="font-size: 11px; color: {fg};">{cat}</span></div>',
-                            unsafe_allow_html=True
-                        )
-                        with st.expander(f"**{keyword}**"):
+                        emoji = CATEGORY_EMOJI.get(cat, "⚪")
+                        with st.expander(f"{emoji} **{keyword}**  ·  {cat}"):
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
                             st.caption(f"Modul: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
