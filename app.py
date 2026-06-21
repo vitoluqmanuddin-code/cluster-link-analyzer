@@ -2,6 +2,29 @@
 
 import streamlit as st
 import streamlit.components.v1 as components
+
+st.set_page_config(
+    page_title="Cluster Link Analyzer",
+    page_icon="🔗",
+    layout="wide"
+)
+
+def check_password():
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if not st.session_state.authenticated:
+        st.title("🔗 Cluster Link Analyzer")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if password == st.secrets["passwords"]["password"]:
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("Password salah.")
+        st.stop()
+
+check_password()
 import pandas as pd
 import os
 import tempfile
@@ -19,12 +42,6 @@ from graph_builder import (
 )
 
 # ─── Konfigurasi ──────────────────────────────────────────────────────────
-
-st.set_page_config(
-    page_title="Cluster Link Analyzer",
-    page_icon="🔗",
-    layout="wide"
-)
 
 CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
 SESSION_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sessions")
