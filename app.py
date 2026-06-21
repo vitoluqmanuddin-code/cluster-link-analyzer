@@ -410,9 +410,20 @@ with tab1:
     article_score_df = pd.DataFrame(article_score_data).sort_values(
         ["Skor", "Inbound"], ascending=[True, True]
     )
-    st.caption(
-        "Status: Orphaned (0 inbound, skor 0) · Low (1-2 inbound, skor 1) · "
-        "Standard (3-4 inbound, skor 2) · Excellent (5+ inbound, skor 3)"
+    st.markdown(
+        """
+        <div style="font-size: 14px; color: var(--text-color-light, #888); margin-bottom: 8px;">
+        <span style="background-color: #3d1a1a; color: #ff8080; padding: 2px 8px; border-radius: 4px;">Orphaned</span>
+        0 inbound, skor 0 &nbsp;&middot;&nbsp;
+        <span style="background-color: #3d3010; color: #ffd966; padding: 2px 8px; border-radius: 4px;">Low</span>
+        1-2 inbound, skor 1 &nbsp;&middot;&nbsp;
+        <span style="background-color: #1a1a3d; color: #8080ff; padding: 2px 8px; border-radius: 4px;">Standard</span>
+        3-4 inbound, skor 2 &nbsp;&middot;&nbsp;
+        <span style="background-color: #1a2a1a; color: #80ff80; padding: 2px 8px; border-radius: 4px;">Excellent</span>
+        5+ inbound, skor 3
+        </div>
+        """,
+        unsafe_allow_html=True
     )
     st.dataframe(
         article_score_df.drop(columns=["Skor"]),
@@ -661,9 +672,20 @@ with tab2:
                 "Status": scoring["status"],
             })
         cluster_df = pd.DataFrame(cluster_data).sort_values("Inbound", ascending=False)
-        st.caption(
-            "Status: Orphaned (0 inbound, skor 0) · Low (1-2 inbound, skor 1) · "
-            "Standard (3-4 inbound, skor 2) · Excellent (5+ inbound, skor 3)"
+        st.markdown(
+            """
+            <div style="font-size: 14px; color: var(--text-color-light, #888); margin-bottom: 8px;">
+            <span style="background-color: #3d1a1a; color: #ff8080; padding: 2px 8px; border-radius: 4px;">Orphaned</span>
+            0 inbound, skor 0 &nbsp;&middot;&nbsp;
+            <span style="background-color: #3d3010; color: #ffd966; padding: 2px 8px; border-radius: 4px;">Low</span>
+            1-2 inbound, skor 1 &nbsp;&middot;&nbsp;
+            <span style="background-color: #1a1a3d; color: #8080ff; padding: 2px 8px; border-radius: 4px;">Standard</span>
+            3-4 inbound, skor 2 &nbsp;&middot;&nbsp;
+            <span style="background-color: #1a2a1a; color: #80ff80; padding: 2px 8px; border-radius: 4px;">Excellent</span>
+            5+ inbound, skor 3
+            </div>
+            """,
+            unsafe_allow_html=True
         )
         st.dataframe(
             cluster_df.drop(columns=["Skor"]),
