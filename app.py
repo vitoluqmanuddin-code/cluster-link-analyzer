@@ -425,8 +425,22 @@ with tab1:
         """,
         unsafe_allow_html=True
     )
+
+    def highlight_article_status(val):
+        if val == "Orphaned":
+            return "background-color: #3d1a1a"
+        elif val == "Low":
+            return "background-color: #3d3010"
+        elif val == "Standard":
+            return "background-color: #1a1a3d"
+        elif val == "Excellent":
+            return "background-color: #1a2a1a"
+        return ""
+
     st.dataframe(
-        article_score_df.drop(columns=["Skor"]),
+        article_score_df.drop(columns=["Skor"]).style.map(
+            highlight_article_status, subset=["Status"]
+        ),
         use_container_width=True,
         hide_index=True
     )
@@ -687,8 +701,22 @@ with tab2:
             """,
             unsafe_allow_html=True
         )
+
+        def highlight_cluster_status(val):
+            if val == "Orphaned":
+                return "background-color: #3d1a1a"
+            elif val == "Low":
+                return "background-color: #3d3010"
+            elif val == "Standard":
+                return "background-color: #1a1a3d"
+            elif val == "Excellent":
+                return "background-color: #1a2a1a"
+            return ""
+
         st.dataframe(
-            cluster_df.drop(columns=["Skor"]),
+            cluster_df.drop(columns=["Skor"]).style.map(
+                highlight_cluster_status, subset=["Status"]
+            ),
             use_container_width=True,
             hide_index=True
         )
