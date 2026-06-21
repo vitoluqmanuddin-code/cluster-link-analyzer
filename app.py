@@ -15,13 +15,18 @@ def check_password():
 
     if not st.session_state.authenticated:
         st.title("🔗 Cluster Link Analyzer")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            if password == st.secrets["passwords"]["password"]:
+
+        def try_login():
+            if st.session_state.password_input == st.secrets["passwords"]["password"]:
                 st.session_state.authenticated = True
-                st.rerun()
             else:
-                st.error("Password salah.")
+                st.session_state.login_error = True
+
+        st.text_input("Password", type="password", key="password_input", on_change=try_login)
+
+        if st.session_state.get("login_error"):
+            st.error("Password salah.")
+
         st.stop()
 
 check_password()
@@ -405,7 +410,12 @@ with tab1:
     article_score_df = pd.DataFrame(article_score_data).sort_values(
         ["Skor", "Inbound"], ascending=[True, True]
     )
-    st.dataframe(article_score_df, use_container_width=True, hide_index=True)
+    st.caption("Skor: 0 = Orphaned, 1 = Low, 2 = Standard, 3 = Excellent")
+    st.dataframe(
+        article_score_df.drop(columns=["Skor"]),
+        use_container_width=True,
+        hide_index=True
+    )
 
     total_score = article_score_df["Skor"].sum()
     max_score = len(article_score_df) * 3
@@ -648,7 +658,12 @@ with tab2:
                 "Status": scoring["status"],
             })
         cluster_df = pd.DataFrame(cluster_data).sort_values("Inbound", ascending=False)
-        st.dataframe(cluster_df, use_container_width=True, hide_index=True)
+        st.caption("Skor: 0 = Orphaned, 1 = Low, 2 = Standard, 3 = Excellent")
+        st.dataframe(
+            cluster_df.drop(columns=["Skor"]),
+            use_container_width=True,
+            hide_index=True
+        )
 
         sub_scores = [get_inbound_score(subG.in_degree(u))["score"] for u in filtered_urls]
         sub_total = sum(sub_scores)
