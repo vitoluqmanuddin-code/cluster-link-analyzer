@@ -849,7 +849,7 @@ with tab3:
             col1, col2, col3 = st.columns(3)
             col1.metric("Inbound", len(detail["inbound"]))
             col2.metric("Outbound", len(detail["outbound"]))
-            col3.metric("Gap", len(detail["missing_same_feature"]) + len(detail["missing_same_module"]))
+            col3.metric("Potensi Inbound", len(detail["missing_same_feature"]) + len(detail["missing_same_module"]))
 
             st.caption(f"🔗 {selected_url}")
 
@@ -911,7 +911,8 @@ with tab3:
             st.divider()
 
             total_gap = len(detail["missing_same_feature"]) + len(detail["missing_same_module"])
-            st.subheader(f"❌ Gap ({total_gap})")
+            st.subheader(f"💡 Potensi Inbound ({total_gap})")
+            st.caption("Artikel sesama modul/fitur yang belum memberikan inbound link ke artikel ini.")
 
             st.caption(f"Sesama Fitur: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")
             if detail["missing_same_feature"]:

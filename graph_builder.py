@@ -302,11 +302,8 @@ def get_article_detail(G: nx.DiGraph, url: str, cluster_meta: dict) -> dict:
             "category": categorize(target_meta.get("module", ""), target_meta.get("feature", "")),
         })
 
-    # Missing links — sesama modul yang belum terhubung sama sekali
+    # Potensi inbound — sesama modul yang belum kasih inbound ke artikel ini
     inbound_urls = {e["url"] for e in inbound}
-    outbound_urls = {e["url"] for e in outbound}
-    connected_urls = inbound_urls | outbound_urls | {url}
-    current_feature = meta.get("feature", "")
 
     missing_same_feature = []
     missing_same_module = []
@@ -318,7 +315,7 @@ def get_article_detail(G: nx.DiGraph, url: str, cluster_meta: dict) -> dict:
             continue
         if not G.has_node(other_url):
             continue
-        if other_url not in connected_urls:
+        if other_url not in inbound_urls:
             item = {
                 "url": other_url,
                 "keyword": other_meta.get("keyword", ""),
