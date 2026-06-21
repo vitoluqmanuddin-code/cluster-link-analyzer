@@ -410,7 +410,10 @@ with tab1:
     article_score_df = pd.DataFrame(article_score_data).sort_values(
         ["Skor", "Inbound"], ascending=[True, True]
     )
-    st.caption("Skor: 0 = Orphaned, 1 = Low, 2 = Standard, 3 = Excellent")
+    st.caption(
+        "Status: Orphaned (0 inbound, skor 0) · Low (1-2 inbound, skor 1) · "
+        "Standard (3-4 inbound, skor 2) · Excellent (5+ inbound, skor 3)"
+    )
     st.dataframe(
         article_score_df.drop(columns=["Skor"]),
         use_container_width=True,
@@ -658,7 +661,10 @@ with tab2:
                 "Status": scoring["status"],
             })
         cluster_df = pd.DataFrame(cluster_data).sort_values("Inbound", ascending=False)
-        st.caption("Skor: 0 = Orphaned, 1 = Low, 2 = Standard, 3 = Excellent")
+        st.caption(
+            "Status: Orphaned (0 inbound, skor 0) · Low (1-2 inbound, skor 1) · "
+            "Standard (3-4 inbound, skor 2) · Excellent (5+ inbound, skor 3)"
+        )
         st.dataframe(
             cluster_df.drop(columns=["Skor"]),
             use_container_width=True,
