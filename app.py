@@ -871,18 +871,7 @@ with tab3:
             with col_in:
                 st.subheader(f"⬅️ Inbound ({len(detail['inbound'])})")
                 st.caption("Artikel yang memberikan link ke artikel ini.")
-                st.markdown(
-                    """
-                    <div style="font-size: 13px; margin-bottom: 8px;">
-                    <span style="background-color: #1a2a1a; color: #80ff80; padding: 2px 8px; border-radius: 4px;">Sesama Fitur</span>
-                    &nbsp;&middot;&nbsp;
-                    <span style="background-color: #1a1a3d; color: #8080ff; padding: 2px 8px; border-radius: 4px;">Sesama Modul</span>
-                    &nbsp;&middot;&nbsp;
-                    <span style="background-color: #2a2a2a; color: #aaaaaa; padding: 2px 8px; border-radius: 4px;">Beda Modul</span>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                st.caption("🟢 Sesama Fitur  ·  🔵 Sesama Modul  ·  ⚪ Beda Modul")
                 CATEGORY_EMOJI = {
                     "Sesama Fitur": "🟢",
                     "Sesama Modul": "🔵",
@@ -905,18 +894,7 @@ with tab3:
             with col_out:
                 st.subheader(f"➡️ Outbound ({len(detail['outbound'])})")
                 st.caption("Artikel yang mendapat link dari artikel ini.")
-                st.markdown(
-                    """
-                    <div style="font-size: 13px; margin-bottom: 8px;">
-                    <span style="background-color: #1a2a1a; color: #80ff80; padding: 2px 8px; border-radius: 4px;">Sesama Fitur</span>
-                    &nbsp;&middot;&nbsp;
-                    <span style="background-color: #1a1a3d; color: #8080ff; padding: 2px 8px; border-radius: 4px;">Sesama Modul</span>
-                    &nbsp;&middot;&nbsp;
-                    <span style="background-color: #2a2a2a; color: #aaaaaa; padding: 2px 8px; border-radius: 4px;">Beda Modul</span>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                st.caption("🟢 Sesama Fitur  ·  🔵 Sesama Modul  ·  ⚪ Beda Modul")
                 if detail["outbound"]:
                     for item in detail["outbound"]:
                         item_meta = cluster_meta.get(item["url"], {})
