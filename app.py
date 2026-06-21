@@ -659,7 +659,7 @@ with tab2:
             components.html(html, height=520, scrolling=False)
             st.caption(
                 "★ Pillar (border ungu)  |  "
-                "✕ Yatim dalam modul (border merah)  |  "
+                "✕ Orphaned dalam modul (border merah)  |  "
                 "🔵 Informational  |  "
                 "🟢 Commercial  |  "
                 "🟠 Transactional"
