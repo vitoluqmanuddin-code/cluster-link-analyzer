@@ -656,6 +656,61 @@ with tab2:
                     html = f.read()
             os.unlink(tmp.name)
 
+            custom_js = """
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var checkNetwork = setInterval(function() {
+                    var networkInstance = null;
+                    for (var key in window) {
+                        try {
+                            if (window[key] && window[key].body && window[key].body.data && window[key].body.data.edges) {
+                                networkInstance = window[key];
+                                break;
+                            }
+                        } catch(e) {}
+                    }
+                    if (networkInstance) {
+                        clearInterval(checkNetwork);
+                        setupClickHandler(networkInstance);
+                    }
+                }, 200);
+
+                function setupClickHandler(network) {
+                    var allEdges = network.body.data.edges;
+
+                    network.on("selectNode", function(params) {
+                        var selectedNode = params.nodes[0];
+                        var connectedEdges = network.getConnectedEdges(selectedNode);
+                        var updates = [];
+
+                        allEdges.forEach(function(edge) {
+                            if (connectedEdges.indexOf(edge.id) === -1) {
+                                updates.push({id: edge.id, color: {color: "#333333", highlight: "#333333", opacity: 0.2}});
+                            } else {
+                                var isInbound = edge.to === selectedNode;
+                                if (isInbound) {
+                                    updates.push({id: edge.id, color: {color: "#00C853", highlight: "#00C853", opacity: 1}});
+                                } else {
+                                    updates.push({id: edge.id, color: {color: "#FF9100", highlight: "#FF9100", opacity: 1}});
+                                }
+                            }
+                        });
+                        allEdges.update(updates);
+                    });
+
+                    network.on("deselectNode", function() {
+                        var updates = [];
+                        allEdges.forEach(function(edge) {
+                            updates.push({id: edge.id, color: {color: "#4B61DD", highlight: "#4B61DD", opacity: 1}});
+                        });
+                        allEdges.update(updates);
+                    });
+                }
+            });
+            </script>
+            """
+            html = html.replace("</body>", custom_js + "</body>")
+
             components.html(html, height=520, scrolling=False)
             st.caption(
                 "★ Pillar (border ungu)  |  "
