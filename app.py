@@ -797,8 +797,10 @@ with tab2:
                 target_meta = cluster_meta.get(target, {})
                 sub_link_data.append({
                     "Page URL": source,
+                    "Modul": source_meta.get("module", ""),
                     "Fitur": source_meta.get("feature", ""),
                     "Destination URL": target,
+                    "Modul Tujuan": target_meta.get("module", ""),
                     "Fitur Tujuan": target_meta.get("feature", ""),
                     "Anchor Text": edge.get("anchor", ""),
                 })
