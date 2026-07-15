@@ -343,8 +343,8 @@ with tab1:
 
     st.divider()
 
-    st.subheader("📦 Keterhubungan per Modul")
-    st.caption("Inbound dihitung dari seluruh artikel dalam list, lintas modul. Daftar diurutkan dari modul yang paling lemah koneksinya.")
+    st.subheader("📦 Keterhubungan per Cluster")
+    st.caption("Inbound dihitung dari seluruh artikel dalam list, lintas cluster. Daftar diurutkan dari cluster yang paling lemah koneksinya.")
 
     module_stats = get_module_stats(G, cluster_meta)
     module_df = pd.DataFrame(module_stats)
@@ -379,8 +379,8 @@ with tab1:
             "url": "URL",
             "inbound_count": "Inbound",
             "title": "Keyword",
-            "module": "Modul",
-            "feature": "Fitur",
+            "module": "Cluster",
+            "feature": "Sub Cluster",
             "intent": "Intent"
         })
         st.dataframe(hub_df, use_container_width=True, hide_index=True)
@@ -398,8 +398,8 @@ with tab1:
         scoring = get_inbound_score(inbound)
         article_score_data.append({
             "Keyword": meta.get("keyword", ""),
-            "Modul": meta.get("module", ""),
-            "Fitur": meta.get("feature", ""),
+            "Cluster": meta.get("module", ""),
+            "Sub Cluster": meta.get("feature", ""),
             "Intent": meta.get("intent", ""),
             "Bahasa": meta.get("language", ""),
             "Inbound": inbound,
@@ -462,12 +462,12 @@ with tab1:
             orphan_data.append({
                 "Keyword": meta.get("keyword", ""),
                 "URL": url,
-                "Modul": meta.get("module", ""),
-                "Fitur": meta.get("feature", ""),
+                "Cluster": meta.get("module", ""),
+                "Sub Cluster": meta.get("feature", ""),
                 "Intent": meta.get("intent", ""),
                 "Outbound": G.out_degree(url),
             })
-        orphan_df = pd.DataFrame(orphan_data).sort_values(["Modul", "Fitur"])
+        orphan_df = pd.DataFrame(orphan_data).sort_values(["Cluster", "Sub Cluster"])
         st.dataframe(orphan_df, use_container_width=True, hide_index=True)
     else:
         st.success("Semua artikel sudah mendapat minimal 1 inbound link!")
@@ -487,15 +487,15 @@ with tab1:
             target_meta = cluster_meta.get(target, {})
             link_data.append({
                 "Page URL": source,
-                "Modul": source_meta.get("module", ""),
-                "Fitur": source_meta.get("feature", ""),
+                "Cluster": source_meta.get("module", ""),
+                "Sub Cluster": source_meta.get("feature", ""),
                 "Destination URL": target,
-                "Modul Tujuan": target_meta.get("module", ""),
-                "Fitur Tujuan": target_meta.get("feature", ""),
+                "Cluster Tujuan": target_meta.get("module", ""),
+                "Sub Cluster Tujuan": target_meta.get("feature", ""),
                 "Anchor Text": edge.get("anchor", ""),
             })
         if link_data:
-            link_df = pd.DataFrame(link_data).sort_values(["Modul", "Fitur"])
+            link_df = pd.DataFrame(link_data).sort_values(["Cluster", "Sub Cluster"])
             st.dataframe(link_df, use_container_width=True, hide_index=True)
         else:
             st.info("Tidak ada internal link ditemukan.")
@@ -510,24 +510,24 @@ with tab2:
 
     col1, col2 = st.columns(2)
     with col1:
-        module_opts_t2 = ["Semua Modul"] + options["modules"]
+        module_opts_t2 = ["Semua Cluster"] + options["modules"]
         selected_module = st.selectbox(
-            "Pilih Modul",
+            "Pilih Cluster",
             module_opts_t2,
             index=module_opts_t2.index(st.session_state.get("sel_module_tab3", "Semua Modul"))
             if st.session_state.get("sel_module_tab3", "Semua Modul") in module_opts_t2 else 0,
             key="sel_module"
         )
     with col2:
-        if selected_module == "Semua Modul":
+        if selected_module == "Semua Cluster":
             all_features = sorted(set(
                 f for feats in options["features"].values() for f in feats
             ))
-            feature_opts = ["Semua Fitur"] + all_features
+            feature_opts = ["Semua Sub Cluster"] + all_features
         else:
-            feature_opts = ["Semua Fitur"] + options["features"].get(selected_module, [])
+            feature_opts = ["Semua Sub Cluster"] + options["features"].get(selected_module, [])
         selected_feature = st.selectbox(
-            "Pilih Fitur",
+            "Pilih Sub Cluster",
             feature_opts,
             index=feature_opts.index(st.session_state.get("sel_feature_tab3", "Semua Fitur"))
             if st.session_state.get("sel_feature_tab3", "Semua Fitur") in feature_opts else 0,
@@ -537,9 +537,9 @@ with tab2:
     # Filter URL
     filtered_urls = set()
     for url, meta in cluster_meta.items():
-        if selected_module != "Semua Modul" and meta.get("module") != selected_module:
+        if selected_module != "Semua Cluster" and meta.get("module") != selected_module:
             continue
-        if selected_feature != "Semua Fitur" and meta.get("feature") != selected_feature:
+        if selected_feature != "Semua Sub Cluster" and meta.get("feature") != selected_feature:
             continue
         if G.has_node(url):
             filtered_urls.add(url)
@@ -558,11 +558,11 @@ with tab2:
         sub_avg_score = sum(sub_all_scores) / len(sub_all_scores) if sub_all_scores else 0
         sub_connectivity_top = get_connectivity_pct(sub_avg_score)
 
-        col1.metric("Artikel dalam cluster", sub_stats["total_nodes"])
+        col1.metric("Artikel dalam sub cluster", sub_stats["total_nodes"])
         col2.metric("Link internal", sub_stats["total_edges"])
         col3.metric("Orphaned Content", len(sub_stats["orphan_nodes"]))
         col4.metric("Skor keterhubungan", f"{sub_connectivity_top['pct']}% ({sub_connectivity_top['status']})")
-        st.caption("Link dihitung hanya dari sesama artikel dalam modul/fitur yang dipilih.")
+        st.caption("Link dihitung hanya dari sesama artikel dalam cluster/sub cluster yang dipilih.")
 
         st.divider()
 
@@ -611,7 +611,7 @@ with tab2:
                 module = cluster_meta.get(node, {}).get("module", "")
                 tooltip = (
                     f"{keyword}\n"
-                    f"Modul: {module} › {feature}\n"
+                    f"Cluster: {module} › {feature}\n"
                     f"Intent: {intent}\n"
                     f"Inbound: {in_deg} | Outbound: {out_deg}\n"
                     f"URL: {node}"
@@ -714,7 +714,7 @@ with tab2:
             components.html(html, height=520, scrolling=False)
             st.caption(
                 "★ Pillar (border ungu)  |  "
-                "✕ Orphaned dalam modul (border merah)  |  "
+                "✕ Orphaned dalam sub cluster (border merah)  |  "
                 "🔵 Informational  |  "
                 "🟢 Commercial  |  "
                 "🟠 Transactional"
@@ -731,8 +731,8 @@ with tab2:
             cluster_data.append({
                 "Keyword": meta.get("keyword", ""),
                 "URL": url,
-                "Modul": meta.get("module", ""),
-                "Fitur": meta.get("feature", ""),
+                "Cluster": meta.get("module", ""),
+                "Sub Cluster": meta.get("feature", ""),
                 "Intent": meta.get("intent", ""),
                 "Bahasa": meta.get("language", ""),
                 "Inbound": inbound,
@@ -784,7 +784,7 @@ with tab2:
         st.caption(f"Total skor: {sub_total} / {sub_max} — Skor keterhubungan: {sub_pct}% ({sub_connectivity['status']})")
 
         st.divider()
-        st.subheader("🔗 Semua Internal Link dalam Cluster Ini")
+        st.subheader("🔗 Semua Internal Link dalam Sub Cluster Ini")
 
         if st.session_state.edges:
             sub_link_data = []
@@ -797,11 +797,11 @@ with tab2:
                 target_meta = cluster_meta.get(target, {})
                 sub_link_data.append({
                     "Page URL": source,
-                    "Modul": source_meta.get("module", ""),
-                    "Fitur": source_meta.get("feature", ""),
+                    "Cluster": source_meta.get("module", ""),
+                    "Sub Cluster": source_meta.get("feature", ""),
                     "Destination URL": target,
-                    "Modul Tujuan": target_meta.get("module", ""),
-                    "Fitur Tujuan": target_meta.get("feature", ""),
+                    "Cluster Tujuan": target_meta.get("module", ""),
+                    "Sub Cluster Tujuan": target_meta.get("feature", ""),
                     "Anchor Text": edge.get("anchor", ""),
                 })
             if sub_link_data:
@@ -812,15 +812,15 @@ with tab2:
 
         if sub_stats["orphan_nodes"]:
             st.divider()
-            st.subheader("🔴 Orphaned Content dalam Modul Ini")
-            st.caption("Artikel yang 0 inbound dari sesama artikel dalam modul/fitur yang dipilih.")
+            st.subheader("🔴 Orphaned Content dalam Sub Cluster Ini")
+            st.caption("Artikel yang 0 inbound dari sesama artikel dalam cluster/sub cluster yang dipilih.")
             orphan_data = []
             for url in sub_stats["orphan_nodes"]:
                 meta = cluster_meta.get(url, {})
                 orphan_data.append({
                     "Keyword": meta.get("keyword", ""),
                     "URL": url,
-                    "Fitur": meta.get("feature", ""),
+                    "Sub Cluster": meta.get("feature", ""),
                     "Intent": meta.get("intent", ""),
                     "Outbound": subG.out_degree(url),
                 })
@@ -836,37 +836,37 @@ with tab3:
 
     col1, col2 = st.columns(2)
     with col1:
-        module_opts = ["Semua Modul"] + options["modules"]
+        module_opts = ["Semua Cluster"] + options["modules"]
         tab3_module = st.selectbox(
-            "Filter by Modul",
+            "Filter by Cluster",
             module_opts,
-            index=module_opts.index(st.session_state.get("sel_module", "Semua Modul"))
-            if st.session_state.get("sel_module", "Semua Modul") in module_opts else 0,
+            index=module_opts.index(st.session_state.get("sel_module", "Semua Cluster"))
+            if st.session_state.get("sel_module", "Semua Cluster") in module_opts else 0,
             key="sel_module_tab3"
         )
 
     with col2:
-        if tab3_module == "Semua Modul":
+        if tab3_module == "Semua Cluster":
             all_feats = sorted(set(
                 f for feats in options["features"].values() for f in feats
             ))
-            feat_opts = ["Semua Fitur"] + all_feats
+            feat_opts = ["Semua Sub Cluster"] + all_feats
         else:
-            feat_opts = ["Semua Fitur"] + options["features"].get(tab3_module, [])
+            feat_opts = ["Semua Sub Cluster"] + options["features"].get(tab3_module, [])
 
         tab3_feature = st.selectbox(
-            "Filter by Fitur",
+            "Filter by Sub Cluster",
             feat_opts,
-            index=feat_opts.index(st.session_state.get("sel_feature", "Semua Fitur"))
-            if st.session_state.get("sel_feature", "Semua Fitur") in feat_opts else 0,
+            index=feat_opts.index(st.session_state.get("sel_feature", "Semua Sub Cluster"))
+            if st.session_state.get("sel_feature", "Semua Sub Cluster") in feat_opts else 0,
             key="sel_feature_tab3"
         )
 
     article_options = {}
     for url, meta in cluster_meta.items():
-        if tab3_module != "Semua Modul" and meta.get("module") != tab3_module:
+        if tab3_module != "Semua Cluster" and meta.get("module") != tab3_module:
             continue
-        if tab3_feature != "Semua Fitur" and meta.get("feature") != tab3_feature:
+        if tab3_feature != "Semua Sub Cluster" and meta.get("feature") != tab3_feature:
             continue
         keyword = meta.get("keyword", "")
         label = f"{keyword} ({meta.get('module', '')} › {meta.get('feature', '')})"
@@ -875,7 +875,7 @@ with tab3:
     filtered_options = article_options
 
     if filtered_options:
-        scope_label = f"{tab3_module}" + (f" › {tab3_feature}" if tab3_feature != "Semua Fitur" else "")
+        scope_label = f"{tab3_module}" + (f" › {tab3_feature}" if tab3_feature != "Semua Sub Cluster" else "")
         if st.button(f"🔄 Scrape Ulang {scope_label} ({len(filtered_options)} artikel)", use_container_width=True):
             urls_to_rescrape = list(filtered_options.values())
             progress_bar = st.progress(0)
@@ -957,8 +957,8 @@ with tab3:
 
             st.divider()
             col1, col2, col3, col4 = st.columns(4)
-            col1.metric("Modul", meta.get("module", "-"))
-            col2.metric("Fitur", meta.get("feature", "-"))
+            col1.metric("Cluster", meta.get("module", "-"))
+            col2.metric("Sub Cluster", meta.get("feature", "-"))
             col3.metric("Intent", meta.get("intent", "-"))
             col4.metric("Bahasa", meta.get("language", "-"))
 
@@ -1002,7 +1002,7 @@ with tab3:
                         emoji = CATEGORY_EMOJI.get(cat, "⚪")
                         with st.expander(f"{emoji} **{keyword}**  ·  {cat}"):
                             st.caption(f"Anchor: *{item['anchor']}*" if item["anchor"] else "Anchor: -")
-                            st.caption(f"Modul: {item['module']} › {item['feature']}")
+                            st.caption(f"Cluster: {item['module']} › {item['feature']}")
                             st.caption(f"URL: {item['url']}")
                 else:
                     st.warning("Belum ada artikel yang link ke sini.")
@@ -1030,7 +1030,7 @@ with tab3:
             st.subheader(f"💡 Potensi Inbound ({total_gap})")
             st.caption("Artikel sesama modul/fitur yang belum memberikan inbound link ke artikel ini.")
 
-            st.caption(f"Sesama Fitur: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")
+            st.caption(f"Sesama Sub Cluster: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")st.caption(f"Sesama Fitur: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")
             if detail["missing_same_feature"]:
                 cols = st.columns(3)
                 for i, item in enumerate(detail["missing_same_feature"]):
@@ -1043,13 +1043,13 @@ with tab3:
 
             st.divider()
 
-            st.caption(f"Sesama Modul: {meta.get('module', '')}, Beda Fitur ({len(detail['missing_same_module'])})")
+            st.caption(f"Sesama Cluster: {meta.get('module', '')}, Beda Sub Cluster ({len(detail['missing_same_module'])})")
             if detail["missing_same_module"]:
                 cols = st.columns(3)
                 for i, item in enumerate(detail["missing_same_module"]):
                     with cols[i % 3]:
                         with st.expander(f"**{item['keyword'] or item['url'].split('/')[-1]}**"):
-                            st.caption(f"Fitur: {item['feature']}")
+                            st.caption(f"Sub Cluster: {item['feature']}")
                             st.caption(f"Intent: {item['intent']}")
                             st.caption(f"URL: {item['url']}")
             else:

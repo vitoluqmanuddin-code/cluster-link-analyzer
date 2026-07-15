@@ -56,13 +56,18 @@ def extract_cluster_metadata(df: pd.DataFrame) -> dict:
     """
     # Deteksi nama kolom — fleksibel terhadap variasi kapitalisasi
     col_map = {}
-    for col in df.columns:
+    cols = list(df.columns)
+
+    # Kolom A (posisi 0) = cluster utama, kolom B (posisi 1) = sub cluster
+    if len(cols) >= 1:
+        col_map["module"] = cols[0]
+    if len(cols) >= 2:
+        col_map["feature"] = cols[1]
+
+    # Deteksi URL, intent, keyword berdasarkan nama kolom
+    for col in cols:
         col_lower = col.lower().strip()
-        if col_lower == "module":
-            col_map["module"] = col
-        elif col_lower == "feature":
-            col_map["feature"] = col
-        elif "url" in col_lower:
+        if "url" in col_lower and "module" not in col_lower:
             col_map["url"] = col
         elif col_lower == "intent":
             col_map["intent"] = col
