@@ -1030,7 +1030,7 @@ with tab3:
             st.subheader(f"💡 Potensi Inbound ({total_gap})")
             st.caption("Artikel sesama modul/fitur yang belum memberikan inbound link ke artikel ini.")
 
-            st.caption(f"Sesama Sub Cluster: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")st.caption(f"Sesama Fitur: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")
+            st.caption(f"Sesama Sub Cluster: {meta.get('feature', '')} ({len(detail['missing_same_feature'])})")
             if detail["missing_same_feature"]:
                 cols = st.columns(3)
                 for i, item in enumerate(detail["missing_same_feature"]):
